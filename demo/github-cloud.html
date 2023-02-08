@@ -27,7 +27,7 @@ Then open http://localhost:8000/bin/sample.html in your browser
             </div>
         </form>
 
-        <p><button id="connect" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" style="margin: 10px">Connect to Github</button></p>
+        <button id="connect" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" style="margin: 10px">Connect to Github</button>
 
         <p id="server-url-error" style="display: none; margin-left: 10px; color: red">
             Invalid Server URL. It should match: https://nango-server-[INSTANCE-ID].onrender.com
@@ -40,14 +40,21 @@ Then open http://localhost:8000/bin/sample.html in your browser
         <script type="module">
             import Nango from 'https://unpkg.com/@nangohq/frontend/dist/index.js';
 
+            const params = new Proxy(new URLSearchParams(window.location.search), {
+                get: (searchParams, prop) => searchParams.get(prop)
+            });
+
+            var host = params.host;
+
             var link = document.getElementById('connect');
             var serverUrlInput = document.getElementById('server-url');
+            var serverUrlInputContainer = document.getElementById('server-url-container');
             var serverUrlInputError = document.getElementById('server-url-error');
 
             link.addEventListener(
                 'click',
                 () => {
-                    var serverUrl = serverUrlInput.value;
+                    var serverUrl = host || serverUrlInput.value;
 
                     if (!/(^https:\/\/nango-server-.{4,}.onrender\.com$)|(^https:\/\/nango-server.onrender\.com$)/.test(serverUrl)) {
                         serverUrlInputError.style.display = 'block';
@@ -73,6 +80,12 @@ Then open http://localhost:8000/bin/sample.html in your browser
             serverUrlInput.addEventListener('input', () => {
                 serverUrlInputError.style.display = 'none';
             });
+
+            if (/(^https:\/\/nango-server-.{4,}.onrender\.com$)|(^https:\/\/nango-server.onrender\.com$)/.test(host)) {
+                serverUrlInputContainer.style.display = 'none';
+            } else {
+                host = null;
+            }
         </script>
     </body>
 </html>
