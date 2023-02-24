@@ -42,6 +42,12 @@ export interface Account {
     callback_url: string | null;
 }
 
+export interface User {
+    id: number;
+    email: string;
+    name: string;
+}
+
 export enum OAuthBodyFormat {
     FORM = 'form',
     JSON = 'json'
